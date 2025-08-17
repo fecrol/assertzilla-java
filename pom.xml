@@ -13,10 +13,11 @@
         <maven.compiler.source>21</maven.compiler.source>
         <maven.compiler.target>21</maven.compiler.target>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+        <junit.version>5.13.3</junit.version>
     </properties>
 
     <modules>
         <module>assertzilla-core</module>
-        <module>assertzilla-junit</module>
+        <module>assertzilla-selenium</module>
     </modules>
 </project>
