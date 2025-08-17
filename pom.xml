@@ -16,6 +16,7 @@
         <selenium.version>4.34.0</selenium.version>
         <junit.version>5.13.3</junit.version>
         <hamcrest.version>3.0</hamcrest.version>
+        <logback.version>1.5.18</logback.version>
     </properties>
 
     <dependencyManagement>
@@ -40,6 +41,12 @@
             <groupId>org.hamcrest</groupId>
             <artifactId>hamcrest</artifactId>
             <version>${hamcrest.version}</version>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>ch.qos.logback</groupId>
+            <artifactId>logback-classic</artifactId>
+            <version>${logback.version}</version>
             <scope>test</scope>
         </dependency>
     </dependencies>
