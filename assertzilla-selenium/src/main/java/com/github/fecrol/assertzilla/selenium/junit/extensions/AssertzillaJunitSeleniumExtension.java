@@ -1,4 +1,4 @@
-package junit.extensions;
+package com.github.fecrol.assertzilla.selenium.junit.extensions;
 
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;
