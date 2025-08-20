@@ -10,5 +10,5 @@ import java.lang.annotation.Target;
 @Target(ElementType.TYPE)
 @Retention(RetentionPolicy.RUNTIME)
 @ExtendWith(AssertzillaJunitSeleniumExtension.class)
-public @interface AssertzillaSeleniumTest {
+public @interface SeleniumTest {
 }
