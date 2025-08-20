@@ -1,0 +1,89 @@
+package com.github.fecrol.assertzilla.selenium.ui.components;
+
+import com.github.fecrol.assertzilla.core.interactions.Wait;
+import com.github.fecrol.assertzilla.selenium.AssertzillaWebDriverManager;
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+
+import java.util.List;
+
+public class WebElement implements ResolvableWebElement {
+
+    private String webElementDescription;
+    private By locator;
+    private WebElement container;
+
+    private WebElement(WebElement.Builder builder) {
+        this.webElementDescription = builder.webElementDescription;
+        this.locator = builder.locator;
+    }
+
+    public static WebElement.Builder describedAs(String webElementDescription) {
+        return new WebElement.Builder(webElementDescription);
+    }
+
+    public WebElement inside(WebElement containerElement) {
+        this.container = containerElement;
+        return this;
+    }
+
+    @Override
+    public org.openqa.selenium.WebElement resolve() {
+        WebDriver webDriver = AssertzillaWebDriverManager.getDriver();
+
+        if (container == null) {
+            Wait.until(() -> ExpectedConditions.presenceOfElementLocated(locator).apply(webDriver) != null)
+                    .perform();
+            Wait.until(() -> ExpectedConditions.visibilityOfElementLocated(locator).apply(webDriver) != null).
+                    perform();
+            return ExpectedConditions.visibilityOfElementLocated(locator).apply(webDriver);
+        } else {
+            Wait.until(() -> ExpectedConditions.presenceOfNestedElementLocatedBy(container.getLocator(), locator).apply(webDriver) != null)
+                    .perform();
+            Wait.until(() -> ExpectedConditions.visibilityOfNestedElementsLocatedBy(container.getLocator(), locator).apply(webDriver) != null)
+                    .perform();
+            Wait.until(() -> !ExpectedConditions.visibilityOfNestedElementsLocatedBy(container.getLocator(), locator).apply(webDriver).isEmpty())
+                    .perform();
+            return ExpectedConditions.visibilityOfNestedElementsLocatedBy(container.getLocator(), locator)
+                    .apply(webDriver)
+                    .stream()
+                    .findFirst()
+                    .orElseThrow();
+        }
+    }
+
+    @Override
+    public List<org.openqa.selenium.WebElement> resolveAll() {
+        return List.of();
+    }
+
+    public By getLocator() {
+        return locator;
+    }
+
+    @Override
+    public String toString() {
+        return container == null ? this.webElementDescription : this.webElementDescription + " inside " + container;
+    }
+
+    public static class Builder {
+
+        private String webElementDescription;
+        private By locator;
+
+        private Builder(String webElementDescription) {
+            this.webElementDescription = webElementDescription;
+        }
+
+        public WebElement located(By locator) {
+            this.locator = locator;
+            return build();
+        }
+
+        private WebElement build() {
+            return new WebElement(this);
+        }
+    }
+}
+
