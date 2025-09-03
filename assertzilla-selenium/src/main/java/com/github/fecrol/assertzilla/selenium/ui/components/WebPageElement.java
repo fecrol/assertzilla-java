@@ -8,6 +8,7 @@ import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
+import java.util.ArrayList;
 import java.util.List;
 
 public class WebPageElement implements FindableWebPageElement {
@@ -32,6 +33,13 @@ public class WebPageElement implements FindableWebPageElement {
 
     @Override
     public WebElement find() {
+        WebDriver webDriver = AssertzillaWebDriverManager.getDriver();
+        Wait.until(() -> findAll().stream().findFirst().isPresent()).perform();
+        WebElement presentWebElement = findAll().stream().findFirst().get();
+        Wait.until(() -> {
+            WebElement visibleWebElement = ExpectedConditions.visibilityOf(presentWebElement).apply(webDriver);
+            return visibleWebElement != null;
+        }).perform();
         return findAll().stream().findFirst().orElseThrow();
     }
 
@@ -39,27 +47,16 @@ public class WebPageElement implements FindableWebPageElement {
     public List<WebElement> findAll() {
         WebDriver webDriver = AssertzillaWebDriverManager.getDriver();
         ExpectedCondition<List<WebElement>> presenceOfElementsCondition;
-        ExpectedCondition<List<WebElement>> visibilityOfElementsCondition;
 
         if (container == null) {
             presenceOfElementsCondition = ExpectedConditions.presenceOfAllElementsLocatedBy(locator);
-            visibilityOfElementsCondition = ExpectedConditions.visibilityOfAllElementsLocatedBy(locator);
         } else {
             presenceOfElementsCondition = ExpectedConditions.presenceOfNestedElementsLocatedBy(container.getLocator(), locator);
-            visibilityOfElementsCondition = ExpectedConditions.visibilityOfNestedElementsLocatedBy(container.getLocator(), locator);
         }
 
-        Wait.until(() -> {
-            List<WebElement> presentElements = presenceOfElementsCondition.apply(webDriver);
-            return presentElements != null && !presentElements.isEmpty();
-        }).perform();
+        List<WebElement> presentWebElements = presenceOfElementsCondition.apply(webDriver);
 
-        Wait.until(() -> {
-            List<WebElement> visibleElements = visibilityOfElementsCondition.apply(webDriver);
-            return visibleElements != null && !visibleElements.isEmpty();
-        }).perform();
-
-        return visibilityOfElementsCondition.apply(webDriver);
+        return presentWebElements == null ? new ArrayList<>() : presentWebElements;
     }
 
     public By getLocator() {
