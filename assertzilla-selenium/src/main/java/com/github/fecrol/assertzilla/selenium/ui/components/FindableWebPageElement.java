@@ -4,7 +4,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public interface FindableWebElement {
+public interface FindableWebPageElement {
     WebElement find();
     List<WebElement> findAll();
 }

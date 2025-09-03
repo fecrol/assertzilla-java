@@ -9,22 +9,22 @@ import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
-public class WebElement implements FindableWebElement {
+public class WebPageElement implements FindableWebPageElement {
 
     private String webElementDescription;
     private By locator;
-    private WebElement container;
+    private WebPageElement container;
 
-    private WebElement(WebElement.Builder builder) {
+    private WebPageElement(WebPageElement.Builder builder) {
         this.webElementDescription = builder.webElementDescription;
         this.locator = builder.locator;
     }
 
-    public static WebElement.Builder describedAs(String webElementDescription) {
-        return new WebElement.Builder(webElementDescription);
+    public static WebPageElement.Builder describedAs(String webElementDescription) {
+        return new WebPageElement.Builder(webElementDescription);
     }
 
-    public WebElement inside(WebElement containerElement) {
+    public WebPageElement inside(WebPageElement containerElement) {
         this.container = containerElement;
         return this;
     }
@@ -79,13 +79,13 @@ public class WebElement implements FindableWebElement {
             this.webElementDescription = webElementDescription;
         }
 
-        public WebElement located(By locator) {
+        public WebPageElement located(By locator) {
             this.locator = locator;
             return build();
         }
 
-        private WebElement build() {
-            return new WebElement(this);
+        private WebPageElement build() {
+            return new WebPageElement(this);
         }
     }
 }

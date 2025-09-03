@@ -2,21 +2,21 @@ package com.github.fecrol.assertzilla.selenium.interactions;
 
 import com.github.fecrol.assertzilla.core.annotations.Log;
 import com.github.fecrol.assertzilla.core.interactions.Interaction;
-import com.github.fecrol.assertzilla.selenium.ui.components.WebElement;
+import com.github.fecrol.assertzilla.selenium.ui.components.WebPageElement;
 
 public class EnterTextInteraction implements Interaction {
 
-    private WebElement webElement;
+    private WebPageElement pageElement;
     private String text;
 
-    public EnterTextInteraction(WebElement webElement, String text) {
-        this.webElement = webElement;
+    public EnterTextInteraction(WebPageElement pageElement, String text) {
+        this.pageElement = pageElement;
         this.text = text;
     }
 
     @Override
     @Log("Enter '${text}' into ${webElement}")
     public void perform() {
-        webElement.find().sendKeys(text);
+        pageElement.find().sendKeys(text);
     }
 }
