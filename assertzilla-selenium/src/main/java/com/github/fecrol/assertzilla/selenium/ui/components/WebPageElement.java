@@ -4,6 +4,7 @@ import com.github.fecrol.assertzilla.core.interactions.Wait;
 import com.github.fecrol.assertzilla.selenium.AssertzillaWebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -30,15 +31,15 @@ public class WebPageElement implements FindableWebPageElement {
     }
 
     @Override
-    public org.openqa.selenium.WebElement find() {
+    public WebElement find() {
         return findAll().stream().findFirst().orElseThrow();
     }
 
     @Override
-    public List<org.openqa.selenium.WebElement> findAll() {
+    public List<WebElement> findAll() {
         WebDriver webDriver = AssertzillaWebDriverManager.getDriver();
-        ExpectedCondition<List<org.openqa.selenium.WebElement>> presenceOfElementsCondition;
-        ExpectedCondition<List<org.openqa.selenium.WebElement>> visibilityOfElementsCondition;
+        ExpectedCondition<List<WebElement>> presenceOfElementsCondition;
+        ExpectedCondition<List<WebElement>> visibilityOfElementsCondition;
 
         if (container == null) {
             presenceOfElementsCondition = ExpectedConditions.presenceOfAllElementsLocatedBy(locator);
@@ -49,12 +50,12 @@ public class WebPageElement implements FindableWebPageElement {
         }
 
         Wait.until(() -> {
-            List<org.openqa.selenium.WebElement> presentElements = presenceOfElementsCondition.apply(webDriver);
+            List<WebElement> presentElements = presenceOfElementsCondition.apply(webDriver);
             return presentElements != null && !presentElements.isEmpty();
         }).perform();
 
         Wait.until(() -> {
-            List<org.openqa.selenium.WebElement> visibleElements = visibilityOfElementsCondition.apply(webDriver);
+            List<WebElement> visibleElements = visibilityOfElementsCondition.apply(webDriver);
             return visibleElements != null && !visibleElements.isEmpty();
         }).perform();
 
