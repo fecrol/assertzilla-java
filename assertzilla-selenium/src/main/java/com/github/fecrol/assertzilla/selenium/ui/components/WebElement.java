@@ -4,11 +4,12 @@ import com.github.fecrol.assertzilla.core.interactions.Wait;
 import com.github.fecrol.assertzilla.selenium.AssertzillaWebDriverManager;
 import org.openqa.selenium.By;
 import org.openqa.selenium.WebDriver;
+import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
 import java.util.List;
 
-public class WebElement implements ResolvableWebElement {
+public class WebElement implements FindableWebElement {
 
     private String webElementDescription;
     private By locator;
@@ -29,33 +30,35 @@ public class WebElement implements ResolvableWebElement {
     }
 
     @Override
-    public org.openqa.selenium.WebElement resolve() {
-        WebDriver webDriver = AssertzillaWebDriverManager.getDriver();
-
-        if (container == null) {
-            Wait.until(() -> ExpectedConditions.presenceOfElementLocated(locator).apply(webDriver) != null)
-                    .perform();
-            Wait.until(() -> ExpectedConditions.visibilityOfElementLocated(locator).apply(webDriver) != null).
-                    perform();
-            return ExpectedConditions.visibilityOfElementLocated(locator).apply(webDriver);
-        } else {
-            Wait.until(() -> ExpectedConditions.presenceOfNestedElementLocatedBy(container.getLocator(), locator).apply(webDriver) != null)
-                    .perform();
-            Wait.until(() -> ExpectedConditions.visibilityOfNestedElementsLocatedBy(container.getLocator(), locator).apply(webDriver) != null)
-                    .perform();
-            Wait.until(() -> !ExpectedConditions.visibilityOfNestedElementsLocatedBy(container.getLocator(), locator).apply(webDriver).isEmpty())
-                    .perform();
-            return ExpectedConditions.visibilityOfNestedElementsLocatedBy(container.getLocator(), locator)
-                    .apply(webDriver)
-                    .stream()
-                    .findFirst()
-                    .orElseThrow();
-        }
+    public org.openqa.selenium.WebElement find() {
+        return findAll().stream().findFirst().orElseThrow();
     }
 
     @Override
-    public List<org.openqa.selenium.WebElement> resolveAll() {
-        return List.of();
+    public List<org.openqa.selenium.WebElement> findAll() {
+        WebDriver webDriver = AssertzillaWebDriverManager.getDriver();
+        ExpectedCondition<List<org.openqa.selenium.WebElement>> presenceOfElementsCondition;
+        ExpectedCondition<List<org.openqa.selenium.WebElement>> visibilityOfElementsCondition;
+
+        if (container == null) {
+            presenceOfElementsCondition = ExpectedConditions.presenceOfAllElementsLocatedBy(locator);
+            visibilityOfElementsCondition = ExpectedConditions.visibilityOfAllElementsLocatedBy(locator);
+        } else {
+            presenceOfElementsCondition = ExpectedConditions.presenceOfNestedElementsLocatedBy(container.getLocator(), locator);
+            visibilityOfElementsCondition = ExpectedConditions.visibilityOfNestedElementsLocatedBy(container.getLocator(), locator);
+        }
+
+        Wait.until(() -> {
+            List<org.openqa.selenium.WebElement> presentElements = presenceOfElementsCondition.apply(webDriver);
+            return presentElements != null && !presentElements.isEmpty();
+        }).perform();
+
+        Wait.until(() -> {
+            List<org.openqa.selenium.WebElement> visibleElements = visibilityOfElementsCondition.apply(webDriver);
+            return visibleElements != null && !visibleElements.isEmpty();
+        }).perform();
+
+        return visibilityOfElementsCondition.apply(webDriver);
     }
 
     public By getLocator() {

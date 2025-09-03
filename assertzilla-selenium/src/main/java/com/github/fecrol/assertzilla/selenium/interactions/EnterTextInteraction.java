@@ -17,6 +17,6 @@ public class EnterTextInteraction implements Interaction {
     @Override
     @Log("Enter '${text}' into ${webElement}")
     public void perform() {
-        webElement.resolve().sendKeys(text);
+        webElement.find().sendKeys(text);
     }
 }

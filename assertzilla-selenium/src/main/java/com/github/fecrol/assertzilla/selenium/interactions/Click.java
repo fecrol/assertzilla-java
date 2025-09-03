@@ -19,6 +19,6 @@ public class Click implements Interaction {
     @Override
     @Log("Click on ${webElement}")
     public void perform() {
-        webElement.resolve().click();
+        webElement.find().click();
     }
 }

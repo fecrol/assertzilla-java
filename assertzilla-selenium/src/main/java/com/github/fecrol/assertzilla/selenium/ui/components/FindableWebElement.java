@@ -4,7 +4,7 @@ import org.openqa.selenium.WebElement;
 
 import java.util.List;
 
-public interface ResolvableWebElement {
-    WebElement resolve();
-    List<WebElement> resolveAll();
+public interface FindableWebElement {
+    WebElement find();
+    List<WebElement> findAll();
 }
