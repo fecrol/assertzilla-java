@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.openqa.selenium.WebDriver;
 import org.openqa.selenium.chrome.ChromeDriver;
+import org.openqa.selenium.chrome.ChromeOptions;
 
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.hamcrest.Matchers.*;
@@ -21,7 +22,7 @@ public class AssertziallaWebDriverManagerTests {
     @DisplayName("A new WebDriver instance should be set on initial initialisation")
     void itShouldSetNewWebDriverInstance() {
         // Given
-        WebDriver chromeDriver = new ChromeDriver();
+        WebDriver chromeDriver = new ChromeDriver(new ChromeOptions().addArguments("--headless=new"));
         AssertzillaWebDriverManager.initialiseWebDriver(chromeDriver);
         // When
         WebDriver webDriver = AssertzillaWebDriverManager.getDriver();
@@ -35,7 +36,7 @@ public class AssertziallaWebDriverManagerTests {
     @DisplayName("The WebDriver can be reset successfully")
     void itShouldResetWebDriver() {
         // Given
-        WebDriver chromeDriver = new ChromeDriver();
+        WebDriver chromeDriver = new ChromeDriver(new ChromeOptions().addArguments("--headless=new"));
         AssertzillaWebDriverManager.initialiseWebDriver(chromeDriver);
         // When
         AssertzillaWebDriverManager.quitDriver();
@@ -49,10 +50,10 @@ public class AssertziallaWebDriverManagerTests {
     @DisplayName("A new WebDriver instance should not be set if a WebDriver instance is set already")
     void itShouldNotSetNewWebDriverWhenWebDriverAlreadySet() {
         // Given
-        WebDriver chromeDriver = new ChromeDriver();
+        WebDriver chromeDriver = new ChromeDriver(new ChromeOptions().addArguments("--headless=new"));
         AssertzillaWebDriverManager.initialiseWebDriver(chromeDriver);
         // When
-        WebDriver anotherChromeDriver = new ChromeDriver();
+        WebDriver anotherChromeDriver = new ChromeDriver(new ChromeOptions().addArguments("--headless=new"));
         AssertzillaWebDriverManager.initialiseWebDriver(anotherChromeDriver);
         // Then
         WebDriver webDriverManagerWebDriver = AssertzillaWebDriverManager.getDriver();
