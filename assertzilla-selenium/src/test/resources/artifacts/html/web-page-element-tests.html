@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Hello World</title>
+</head>
+<body>
+    <h1 id="single-element">Single Element</h1>
+    <h1 class="multiple-elements">Multiple Elements 1</h1>
+    <h1 class="multiple-elements">Multiple Elements 2</h1>
+    <div id="parent-element">
+        <h1 id="child-element">Child Element</h1>
+    </div>
+    <h1 id="invisible-element" style="display: none">Invisible Element</h1>
+    <div id="delayed-presence-element-container"></div>
+    <h1 id="delayed-visibility-element" style="display: none">Delayed Visibility Element</h1>
+
+    <script>
+        setTimeout(function() {
+            const delayedPresenceElement = document.createElement("h1");
+            delayedPresenceElement.id = "delayed-presence-element";
+            delayedPresenceElement.textContent = "Delayed Presence Element";
+            document.getElementById("delayed-presence-element-container").appendChild(delayedPresenceElement);
+        }, 1500)
+
+        setTimeout(function() {
+            document.getElementById("delayed-visibility-element").style.display = "block";
+        }, 2000);
+    </script>
+</body>
+</html>
