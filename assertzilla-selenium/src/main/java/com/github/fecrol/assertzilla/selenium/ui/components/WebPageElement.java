@@ -2,9 +2,7 @@ package com.github.fecrol.assertzilla.selenium.ui.components;
 
 import com.github.fecrol.assertzilla.core.interactions.Wait;
 import com.github.fecrol.assertzilla.selenium.AssertzillaWebDriverManager;
-import org.openqa.selenium.By;
-import org.openqa.selenium.WebDriver;
-import org.openqa.selenium.WebElement;
+import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
 
@@ -13,12 +11,14 @@ import java.util.List;
 
 public class WebPageElement implements FindableWebPageElement {
 
-    private String webElementDescription;
+    private WebDriver webDriver;
+    private String description;
     private By locator;
     private WebPageElement container;
 
     private WebPageElement(WebPageElement.Builder builder) {
-        this.webElementDescription = builder.webElementDescription;
+        this.webDriver = AssertzillaWebDriverManager.getDriver();
+        this.description = builder.description;
         this.locator = builder.locator;
     }
 
@@ -33,19 +33,32 @@ public class WebPageElement implements FindableWebPageElement {
 
     @Override
     public WebElement find() {
-        WebDriver webDriver = AssertzillaWebDriverManager.getDriver();
-        Wait.until(() -> findAll().stream().findFirst().isPresent()).perform();
+        Wait.until(() -> findAll().stream().findFirst().isPresent())
+                .orComplainWith(new NoSuchElementException(String.format(
+                        "Unable to find %s located %s",
+                        description,
+                        locator
+                )))
+                .perform();
         WebElement presentWebElement = findAll().stream().findFirst().get();
         Wait.until(() -> {
             WebElement visibleWebElement = ExpectedConditions.visibilityOf(presentWebElement).apply(webDriver);
             return visibleWebElement != null;
-        }).perform();
-        return findAll().stream().findFirst().orElseThrow();
+        }).orComplainWith(new ElementNotInteractableException(String.format(
+                "Unable to interact with %s located %s",
+                        description,
+                        locator
+                )))
+                .perform();
+
+        return findAll()
+                .stream()
+                .findFirst()
+                .orElseThrow();
     }
 
     @Override
     public List<WebElement> findAll() {
-        WebDriver webDriver = AssertzillaWebDriverManager.getDriver();
         ExpectedCondition<List<WebElement>> presenceOfElementsCondition;
 
         if (container == null) {
@@ -54,7 +67,11 @@ public class WebPageElement implements FindableWebPageElement {
             presenceOfElementsCondition = ExpectedConditions.presenceOfNestedElementsLocatedBy(container.getLocator(), locator);
         }
 
-        List<WebElement> presentWebElements = presenceOfElementsCondition.apply(webDriver);
+        List<WebElement> presentWebElements = null;
+
+        try {
+            presentWebElements = presenceOfElementsCondition.apply(webDriver);
+        } catch (NoSuchElementException ignored) {}
 
         return presentWebElements == null ? new ArrayList<>() : presentWebElements;
     }
@@ -65,16 +82,16 @@ public class WebPageElement implements FindableWebPageElement {
 
     @Override
     public String toString() {
-        return container == null ? this.webElementDescription : this.webElementDescription + " inside " + container;
+        return container == null ? this.description : this.description + " inside " + container;
     }
 
     public static class Builder {
 
-        private String webElementDescription;
+        private String description;
         private By locator;
 
         private Builder(String webElementDescription) {
-            this.webElementDescription = webElementDescription;
+            this.description = webElementDescription;
         }
 
         public WebPageElement located(By locator) {
