@@ -1,6 +1,7 @@
 package com.github.fecrol.assertzilla.core.interactions;
 
 import org.awaitility.Awaitility;
+import org.awaitility.core.ConditionTimeoutException;
 
 import java.time.Duration;
 import java.time.temporal.TemporalUnit;
@@ -13,6 +14,7 @@ public class WaitUntilCallableBoolean implements Interaction {
     private Callable<Boolean> condition;
     private Duration waitTimeout;
     private Duration pollInterval;
+    private RuntimeException exception;
 
     private WaitUntilCallableBoolean(Callable<Boolean> condition) {
         this.condition = condition;
@@ -34,12 +36,21 @@ public class WaitUntilCallableBoolean implements Interaction {
         return this;
     }
 
-    public WaitUntilCallableBoolean orComplainWith(Exception exception) {
+    public WaitUntilCallableBoolean orComplainWith(RuntimeException exception) {
+        this.exception = exception;
         return this;
     }
 
     @Override
     public void perform() {
-        Awaitility.await().atMost(waitTimeout).pollInterval(pollInterval).until(condition);
+        if(exception != null) {
+            try {
+                Awaitility.await().atMost(waitTimeout).pollInterval(pollInterval).until(condition);
+            } catch (ConditionTimeoutException e) {
+                throw exception;
+            }
+        } else {
+            Awaitility.await().atMost(waitTimeout).pollInterval(pollInterval).until(condition);
+        }
     }
 }
