@@ -1,6 +1,6 @@
 package com.github.fecrol.assertzilla.selenium.ui.components;
 
-import com.github.fecrol.assertzilla.selenium.AssertzillaWebDriverManager;
+import com.github.fecrol.assertzilla.selenium.webdriver.AssertzillaWebDriverManager;
 import org.junit.jupiter.api.*;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;

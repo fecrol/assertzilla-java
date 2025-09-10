@@ -1,4 +1,4 @@
-package com.github.fecrol.assertzilla.selenium;
+package com.github.fecrol.assertzilla.selenium.webdriver;
 
 import org.openqa.selenium.WebDriver;
 

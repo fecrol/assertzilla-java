@@ -1,5 +1,6 @@
 package com.github.fecrol.assertzilla.selenium;
 
+import com.github.fecrol.assertzilla.selenium.webdriver.AssertzillaWebDriverManager;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;

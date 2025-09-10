@@ -1,6 +1,6 @@
 package com.github.fecrol.assertzilla.selenium.junit.extensions;
 
-import com.github.fecrol.assertzilla.selenium.AssertzillaWebDriverManager;
+import com.github.fecrol.assertzilla.selenium.webdriver.AssertzillaWebDriverManager;
 import org.junit.jupiter.api.extension.AfterEachCallback;
 import org.junit.jupiter.api.extension.BeforeEachCallback;
 import org.junit.jupiter.api.extension.ExtensionContext;

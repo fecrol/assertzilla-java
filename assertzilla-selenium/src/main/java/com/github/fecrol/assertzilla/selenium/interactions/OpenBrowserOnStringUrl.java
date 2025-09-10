@@ -2,7 +2,7 @@ package com.github.fecrol.assertzilla.selenium.interactions;
 
 import com.github.fecrol.assertzilla.core.annotations.Log;
 import com.github.fecrol.assertzilla.core.interactions.Interaction;
-import com.github.fecrol.assertzilla.selenium.AssertzillaWebDriverManager;
+import com.github.fecrol.assertzilla.selenium.webdriver.AssertzillaWebDriverManager;
 
 class OpenBrowserOnStringUrl implements Interaction {
 

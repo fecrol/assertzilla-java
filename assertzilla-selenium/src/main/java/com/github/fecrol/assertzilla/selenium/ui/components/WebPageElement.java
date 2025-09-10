@@ -1,7 +1,7 @@
 package com.github.fecrol.assertzilla.selenium.ui.components;
 
 import com.github.fecrol.assertzilla.core.interactions.Wait;
-import com.github.fecrol.assertzilla.selenium.AssertzillaWebDriverManager;
+import com.github.fecrol.assertzilla.selenium.webdriver.AssertzillaWebDriverManager;
 import org.openqa.selenium.*;
 import org.openqa.selenium.support.ui.ExpectedCondition;
 import org.openqa.selenium.support.ui.ExpectedConditions;
