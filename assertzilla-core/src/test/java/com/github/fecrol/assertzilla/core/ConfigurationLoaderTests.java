@@ -1,6 +1,7 @@
 package com.github.fecrol.assertzilla.core;
 
 import com.github.fecrol.assertzilla.core.exceptions.ConfigurationIOException;
+import com.github.fecrol.assertzilla.core.models.EmptyExistingConfigurationPojo;
 import com.github.fecrol.assertzilla.core.models.HelloWorldConfiguration;
 import com.github.fecrol.assertzilla.core.models.NonExistentConfiguration;
 import org.junit.jupiter.api.DisplayName;
@@ -34,6 +35,16 @@ public class ConfigurationLoaderTests {
         String configurationFileName = "non-existent-configuration.yml";
         // Then
         assertThatThrownBy(() -> ConfigurationLoader.loadResource(configurationFileName).as(NonExistentConfiguration.class))
+                .isInstanceOf(ConfigurationIOException.class);
+    }
+
+    @Test
+    @DisplayName("Configuration IO Exception should be thrown for existent configuration files with missing fields in target POJO")
+    void itThrowsConfigurationIOExceptionForExistentConfigurationFilesWithMissingFieldsInPojo() {
+        // Given
+        String configurationFileName = "existent-configuration.yml";
+        // Then
+        assertThatThrownBy(() -> ConfigurationLoader.loadResource(configurationFileName).as(EmptyExistingConfigurationPojo.class))
                 .isInstanceOf(ConfigurationIOException.class);
     }
 }
