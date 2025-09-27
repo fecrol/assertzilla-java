@@ -5,6 +5,8 @@ import com.github.fecrol.assertzilla.core.exceptions.ConfigurationIOException;
 import com.google.common.base.Strings;
 import org.openqa.selenium.WebDriver;
 
+import java.util.Map;
+
 public class AssertzillaWebDriverManager {
 
     private static final ThreadLocal<WebDriverConfiguration> WEB_DRIVER_CONFIGURATION;
@@ -16,35 +18,17 @@ public class AssertzillaWebDriverManager {
     }
 
     public static WebDriverConfiguration loadWebDriverConfiguration() {
-        if(WEB_DRIVER_CONFIGURATION.get() == null) {
-            WebDriverConfiguration webDriverConfiguration;
-            String webDriverConfigurationFile = System.getProperty("webdriver");
-
-            if(Strings.isNullOrEmpty(webDriverConfigurationFile)) {
-                webDriverConfigurationFile = "default";
-            }
-
-            String configurationFileName = "webdriver-%s-configuration.yml".formatted(webDriverConfigurationFile);
-
-            try {
-                webDriverConfiguration = ConfigurationLoader
-                        .loadResource(configurationFileName)
-                        .as(WebDriverConfiguration.class);
-            } catch (ConfigurationIOException e) {
-                System.out.println(e.getMessage());
-                webDriverConfiguration = new WebDriverConfiguration();
-            }
+        if (WEB_DRIVER_CONFIGURATION.get() == null) {
+            SeleniumConfiguration seleniumConfiguration = loadSeleniumConfiguration();
+            WebDriverConfiguration webDriverConfiguration = loadWebDriverConfigurationFrom(seleniumConfiguration);
 
             webDriverConfiguration
                     .getCapabilities()
                     .getOptions()
                     .removeIf(item -> item.toLowerCase().contains("headless"));
 
-            if(webDriverConfiguration.getCapabilities().isHeadless()) {
+            if (webDriverConfiguration.getCapabilities().isHeadless()) {
                 webDriverConfiguration.getCapabilities().getOptions().add("headless=new");
-            }
-            if(System.getProperties().containsKey("webdriver.platform")) {
-                webDriverConfiguration.getCapabilities().setPlatformName(System.getProperty("webdriver.platform"));
             }
 
             WEB_DRIVER_CONFIGURATION.set(webDriverConfiguration);
@@ -52,14 +36,45 @@ public class AssertzillaWebDriverManager {
         return WEB_DRIVER_CONFIGURATION.get();
     }
 
+    private static SeleniumConfiguration loadSeleniumConfiguration() {
+        SeleniumConfiguration seleniumConfiguration;
+
+        try {
+            seleniumConfiguration = ConfigurationLoader
+                    .loadResource("selenium-configuration.yml")
+                    .node("webdriver")
+                    .as(SeleniumConfiguration.class);
+        } catch (ConfigurationIOException e) {
+            System.out.println(e.getMessage());
+            seleniumConfiguration = new SeleniumConfiguration();
+        }
+
+        return seleniumConfiguration;
+    }
+
+    private static WebDriverConfiguration loadWebDriverConfigurationFrom(SeleniumConfiguration seleniumConfiguration) {
+        Map<String, WebDriverConfiguration> webDriverProfiles = seleniumConfiguration.getProfiles();
+        String webDriverProfile = System.getProperty("webdriver.profile");
+        webDriverProfile = Strings.isNullOrEmpty(webDriverProfile) ? "default" : webDriverProfile;
+        WebDriverConfiguration webDriverConfiguration;
+
+        if (webDriverProfiles.containsKey(webDriverProfile)) {
+            webDriverConfiguration = webDriverProfiles.get(webDriverProfile);
+        } else {
+            webDriverConfiguration = new WebDriverConfiguration();
+        }
+
+        return webDriverConfiguration;
+    }
+
     public static void initialiseWebDriver(WebDriver webDriver) {
-        if(WEB_DRIVER.get() == null) {
+        if (WEB_DRIVER.get() == null) {
             WEB_DRIVER.set(webDriver);
         }
     }
 
     public static void initialiseWebDriver() {
-        if(WEB_DRIVER.get() == null) {
+        if (WEB_DRIVER.get() == null) {
             WebDriverConfiguration webDriverConfiguration = loadWebDriverConfiguration();
             WebDriver webDriver = WebDriverFactory.createWebDriver(webDriverConfiguration);
             WEB_DRIVER.set(webDriver);
