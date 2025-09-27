@@ -19,6 +19,7 @@
         <hamcrest.version>3.0</hamcrest.version>
         <assertj-version>3.27.4</assertj-version>
         <logback.version>1.5.18</logback.version>
+        <guava.version>33.5.0-jre</guava.version>
     </properties>
 
     <dependencyManagement>
@@ -68,6 +69,11 @@
             <artifactId>logback-classic</artifactId>
             <version>${logback.version}</version>
             <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${guava.version}</version>
         </dependency>
     </dependencies>
 
